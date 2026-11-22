@@ -1,0 +1,307 @@
+﻿@{
+    ViewData["Title"] = "Create Staff Account";
+
+    var roles = ViewBag.Roles as IEnumerable<string>
+        ?? new[] { "Admin", "DataEntry", "Verification" };
+}
+
+<div class="mx-auto max-w-6xl space-y-6">
+
+    <!-- Header -->
+    <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-teal-700">
+            PMJAY • Administration
+        </p>
+        <h1 class="mt-1 text-3xl font-bold text-slate-800">
+            Create Staff Account
+        </h1>
+        <p class="mt-2 text-slate-500">
+            Register a new portal user and assign the appropriate access role.
+        </p>
+    </div>
+
+    <!-- Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-800">
+            <i class="bi bi-check-circle-fill mr-2"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
+            <i class="bi bi-exclamation-circle-fill mr-2"></i>
+            @ViewBag.Error
+        </div>
+    }
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Main Form -->
+        <div class="lg:col-span-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 bg-white px-6 py-5">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                        <i class="bi bi-person-plus text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800">Staff Information</h2>
+                        <p class="text-sm text-slate-500">Enter the new staff login details.</p>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-controller="Staff"
+                  asp-action="Create"
+                  method="post"
+                  class="space-y-6 p-6">
+
+                @Html.AntiForgeryToken()
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">
+                        Email Address <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                        <i class="bi bi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               required
+                               maxlength="256"
+                               autocomplete="email"
+                               value="@ViewBag.Email"
+                               placeholder="staff@example.com"
+                               class="w-full rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 text-sm outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100" />
+                    </div>
+
+                    <p class="mt-2 text-xs text-slate-400">
+                        This email address will be used as the staff login username.
+                    </p>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">
+                        Initial Password <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                        <i class="bi bi-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               required
+                               minlength="8"
+                               autocomplete="new-password"
+                               placeholder="Enter initial password"
+                               class="w-full rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-12 text-sm outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100" />
+
+                        <button type="button"
+                                id="togglePassword"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-teal-700"
+                                aria-label="Show password">
+                            <i id="passwordIcon" class="bi bi-eye text-lg"></i>
+                        </button>
+                    </div>
+
+                    <p class="mt-2 text-xs text-slate-400">
+                        Use at least 8 characters and meet your Identity password policy.
+                    </p>
+                </div>
+
+                <!-- Role -->
+                <div>
+                    <label for="role" class="mb-2 block text-sm font-semibold text-slate-700">
+                        Assign Staff Role <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                        <i class="bi bi-shield-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                        <select id="role"
+                                name="role"
+                                required
+                                class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-10 text-sm outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100">
+
+                            <option value="">Select staff role</option>
+
+                            @foreach (var roleName in roles)
+                            {
+                                <option value="@roleName">@roleName</option>
+                            }
+                        </select>
+
+                        <i class="bi bi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                </div>
+
+                <!-- Role Preview -->
+                <div id="roleInfo"
+                     class="rounded-xl border border-teal-100 bg-teal-50 p-4">
+
+                    <div class="flex items-start gap-3">
+                        <i class="bi bi-info-circle-fill mt-0.5 text-teal-700"></i>
+                        <div>
+                            <p id="roleTitle" class="text-sm font-bold text-teal-900">
+                                Select a role
+                            </p>
+                            <p id="roleDescription" class="mt-1 text-sm text-teal-800">
+                                Select the appropriate access level for this staff member.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-slate-100 pt-5">
+
+                    <a asp-controller="Staff"
+                       asp-action="Index"
+                       class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 transition">
+                        <i class="bi bi-person-check"></i>
+                        Create Staff Account
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Information Panel -->
+        <div class="space-y-5">
+
+            <div class="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-sm">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10">
+                    <i class="bi bi-shield-check text-2xl text-teal-300"></i>
+                </div>
+
+                <h3 class="mt-5 text-lg font-bold">Access Management</h3>
+
+                <p class="mt-2 text-sm leading-6 text-slate-300">
+                    Assign the correct role to control which portal modules a staff member can access.
+                </p>
+
+                <div class="mt-5 space-y-3 border-t border-white/10 pt-5 text-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-check-circle-fill text-teal-300"></i>
+                        Role-based access
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-check-circle-fill text-teal-300"></i>
+                        Secure password authentication
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-check-circle-fill text-teal-300"></i>
+                        Admin-controlled accounts
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800">
+                    Available Roles
+                </h3>
+
+                <div class="mt-4 space-y-4">
+
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">Admin</p>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">
+                                Staff management and beneficiary approval.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
+                            <i class="bi bi-pencil-square"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">Data Entry</p>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">
+                                Beneficiary registration and correction updates.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                            <i class="bi bi-clipboard-check"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">Verification</p>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">
+                                Beneficiary verification and correction requests.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <div class="flex gap-3">
+                    <i class="bi bi-exclamation-triangle-fill mt-0.5 text-amber-600"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-amber-900">
+                            Security Reminder
+                        </p>
+                        <p class="mt-1 text-xs leading-5 text-amber-800">
+                            Do not share initial passwords. Use individual staff accounts and assign only the access required for their duties.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // Show / hide password
+    document.getElementById("togglePassword").addEventListener("click", function() {
+        const password = document.getElementById("password");
+        const icon = document.getElementById("passwordIcon");
+
+        const show = password.type === "password";
+        password.type = show ? "text" : "password";
+
+        icon.className = show ? "bi bi-eye-slash text-lg" : "bi bi-eye text-lg";
+        this.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    });
+
+    // Role description
+    document.getElementById("role").addEventListener("change", function() {
+        const title = document.getElementById("roleTitle");
+        const description = document.getElementById("roleDescription");
+
+        const descriptions = {
+            "Admin": "Administrator access. Can manage staff accounts and perform approval functions.",
+            "DataEntry": "Data entry access. Can register beneficiaries and update records returned for correction.",
+            "Verification": "Verification access. Can review beneficiary records and return incorrect records for correction."
+        };
+
+        title.textContent = this.value || "Select a role";
+        description.textContent = descriptions[this.value] ||
+            "Select the appropriate access level for this staff member.";
+    });
+</script>

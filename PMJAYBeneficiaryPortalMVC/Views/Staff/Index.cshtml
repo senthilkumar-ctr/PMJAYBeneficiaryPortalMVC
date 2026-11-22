@@ -1,0 +1,298 @@
+﻿@model IEnumerable<PMJAYBeneficiaryPortalMVC.Controllers.StaffController.StaffListItem>
+
+@{
+    ViewData["Title"] = "Staff Management";
+    var staff = Model?.ToList() ?? new List<PMJAYBeneficiaryPortalMVC.Controllers.StaffController.StaffListItem>();
+    var activeCount = staff.Count(x => x.IsActive);
+    var inactiveCount = staff.Count - activeCount;
+}
+
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+            <p class="text-sm font-semibold uppercase tracking-wider text-teal-700">
+                PMJAY • Administration
+            </p>
+
+            <h1 class="mt-1 text-3xl font-bold text-slate-800">
+                Staff Management
+            </h1>
+
+            <p class="mt-2 text-slate-500">
+                Manage staff accounts, access roles and account status.
+            </p>
+        </div>
+
+        <a asp-controller="Staff"
+           asp-action="Create"
+           class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 transition">
+            <i class="bi bi-person-plus"></i>
+            Create Staff Account
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+            <i class="bi bi-check-circle-fill mt-0.5"></i>
+            <p class="text-sm font-medium">@TempData["Success"]</p>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800">
+            <i class="bi bi-exclamation-circle-fill mt-0.5"></i>
+            <p class="text-sm font-medium">@TempData["Error"]</p>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-500">Total Staff</p>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                    <i class="bi bi-people text-xl"></i>
+                </span>
+            </div>
+            <p class="mt-4 text-3xl font-bold text-slate-800">@staff.Count</p>
+            <p class="mt-1 text-xs text-slate-400">Registered staff accounts</p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-500">Active Accounts</p>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                    <i class="bi bi-person-check text-xl"></i>
+                </span>
+            </div>
+            <p class="mt-4 text-3xl font-bold text-slate-800">@activeCount</p>
+            <p class="mt-1 text-xs text-slate-400">Accounts currently enabled</p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-500">Inactive Accounts</p>
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                    <i class="bi bi-person-x text-xl"></i>
+                </span>
+            </div>
+            <p class="mt-4 text-3xl font-bold text-slate-800">@inactiveCount</p>
+            <p class="mt-1 text-xs text-slate-400">Accounts currently disabled</p>
+        </div>
+
+    </div>
+
+    <!-- Staff Table -->
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-100 px-5 py-5">
+
+            <div>
+                <h2 class="text-lg font-bold text-slate-800">
+                    Staff Directory
+                </h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    View and manage registered portal users.
+                </p>
+            </div>
+
+            <div class="relative w-full lg:w-80">
+                <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input id="staffSearch"
+                       type="text"
+                       placeholder="Search email or role..."
+                       class="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100" />
+            </div>
+
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-100">
+
+                <thead class="bg-slate-50">
+                    <tr class="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-4">Staff Member</th>
+                        <th class="px-5 py-4">Role</th>
+                        <th class="px-5 py-4">Account Status</th>
+                        <th class="px-5 py-4 text-right">Account Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="staffTableBody" class="divide-y divide-slate-100">
+
+                    @if (staff.Any())
+                    {
+                        foreach (var item in staff)
+                        {
+                            var roleClass = item.Role switch
+                            {
+                                "Admin" => "bg-purple-50 text-purple-700",
+                                "Verification" => "bg-blue-50 text-blue-700",
+                                "DataEntry" => "bg-teal-50 text-teal-700",
+                                _ => "bg-slate-100 text-slate-600"
+                            };
+
+                            <tr class="staff-row hover:bg-slate-50 transition"
+                                data-search="@($"{item.Email} {item.Role} {(item.IsActive ? "active" : "inactive")}".ToLowerInvariant())">
+
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 font-bold text-teal-700">
+                                            @(string.IsNullOrWhiteSpace(item.Email)
+                                                ? "S"
+                                                : item.Email.Substring(0, 1).ToUpper())
+                                        </div>
+
+                                        <div>
+                                            <p class="font-semibold text-slate-800">
+                                                @item.Email
+                                            </p>
+                                            <p class="mt-1 text-xs text-slate-400">
+                                                Staff account
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-5 py-4">
+                                    <span class="inline-flex rounded-full px-3 py-1.5 text-xs font-semibold @roleClass">
+                                        @(string.IsNullOrWhiteSpace(item.Role) ? "No Role" : item.Role)
+                                    </span>
+                                </td>
+
+                                <td class="px-5 py-4">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+                                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                                            <span class="h-2 w-2 rounded-full bg-slate-400"></span>
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="px-5 py-4">
+                                    <div class="flex flex-wrap justify-end gap-2">
+
+                                        <a asp-controller="Staff"
+                                           asp-action="EditRole"
+                                           asp-route-id="@item.Id"
+                                           title="Change Role"
+                                           class="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700">
+                                            <i class="bi bi-shield"></i>
+                                            Role
+                                        </a>
+
+                                        <a asp-controller="Staff"
+                                           asp-action="ResetPassword"
+                                           asp-route-id="@item.Id"
+                                           title="Reset Password"
+                                           class="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="bi bi-key"></i>
+                                            Password
+                                        </a>
+
+                                        <form asp-controller="Staff"
+                                              asp-action="ToggleStatus"
+                                              method="post"
+                                              onsubmit="return confirm('@(item.IsActive ? "Deactivate" : "Activate") this staff account?');">
+
+                                            <input type="hidden" name="id" value="@item.Id" />
+
+                                            <button type="submit"
+                                                    class="inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-xs font-semibold transition @(item.IsActive ? "border-red-200 text-red-700 hover:bg-red-50" : "border-emerald-200 text-emerald-700 hover:bg-emerald-50")">
+                                                <i class="bi @(item.IsActive ? "bi-person-x" : "bi-person-check")"></i>
+                                                @(item.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="px-5 py-16 text-center">
+                                <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                                    <i class="bi bi-people text-2xl"></i>
+                                </div>
+                                <h3 class="font-semibold text-slate-700">
+                                    No staff accounts found
+                                </h3>
+                                <p class="mt-1 text-sm text-slate-500">
+                                    Create a staff account to get started.
+                                </p>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr id="noSearchResults" class="hidden">
+                        <td colspan="4" class="px-5 py-12 text-center text-sm text-slate-500">
+                            No staff members match your search.
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-slate-100 px-5 py-4">
+            <p class="text-sm text-slate-500">
+                Total <span class="font-semibold text-slate-700">@staff.Count</span> staff account(s)
+            </p>
+
+            <a asp-controller="Staff"
+               asp-action="Create"
+               class="text-sm font-semibold text-teal-700 hover:text-teal-900">
+                + Add Staff
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("staffSearch");
+        const rows = document.querySelectorAll(".staff-row");
+        const noResults = document.getElementById("noSearchResults");
+
+        if (!searchInput) return;
+
+        searchInput.addEventListener("input", function() {
+            const searchValue = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            rows.forEach(function(row) {
+                const rowText = row.getAttribute("data-search") || "";
+                const matched = rowText.includes(searchValue);
+
+                row.classList.toggle("hidden", !matched);
+
+                if (matched) {
+                    visibleCount++;
+                }
+            });
+
+            if (noResults) {
+                noResults.classList.toggle("hidden", visibleCount > 0);
+            }
+        });
+    });
+</script>

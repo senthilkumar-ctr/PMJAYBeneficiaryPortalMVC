@@ -1,0 +1,252 @@
+﻿@{
+    ViewData["Title"] = "Edit Staff Role";
+
+    var roles = ViewBag.Roles as IEnumerable<string>
+        ?? new[] { "Admin", "DataEntry", "Verification" };
+
+    var currentRole = ViewBag.CurrentRole as string ?? "";
+    var email = ViewBag.Email as string ?? "";
+    var userId = ViewBag.UserId as string ?? "";
+}
+
+<div class="mx-auto max-w-5xl space-y-6">
+
+    <!-- Header -->
+    <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-teal-700">
+            PMJAY • Administration
+        </p>
+        <h1 class="mt-1 text-3xl font-bold text-slate-800">
+            Edit Staff Role
+        </h1>
+        <p class="mt-2 text-slate-500">
+            Update the access permissions assigned to this staff account.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Main Form -->
+        <div class="lg:col-span-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-6 py-5">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                        <i class="bi bi-shield-lock text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800">Role Assignment</h2>
+                        <p class="text-sm text-slate-500">
+                            Select the appropriate staff access level.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-controller="Staff"
+                  asp-action="EditRole"
+                  method="post"
+                  class="space-y-6 p-6">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="id" value="@userId" />
+
+                <!-- Email -->
+                <div>
+                    <label class="mb-2 block text-sm font-semibold text-slate-700">
+                        Staff Email Address
+                    </label>
+
+                    <div class="relative">
+                        <i class="bi bi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text"
+                               value="@email"
+                               readonly
+                               class="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 py-3.5 pl-11 pr-4 text-sm text-slate-600 outline-none" />
+                    </div>
+                    <p class="mt-2 text-xs text-slate-400">
+                        Staff login email cannot be changed from this page.
+                    </p>
+                </div>
+
+                <!-- Current Role -->
+                <div>
+                    <label class="mb-2 block text-sm font-semibold text-slate-700">
+                        Current Role
+                    </label>
+
+                    <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                            <i class="bi bi-person-badge text-lg"></i>
+                        </span>
+
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">
+                                @currentRole
+                            </p>
+                            <p class="text-xs text-slate-400">
+                                Currently assigned role
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Role -->
+                <div>
+                    <label for="role" class="mb-2 block text-sm font-semibold text-slate-700">
+                        New Role <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                        <i class="bi bi-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                        <select id="role"
+                                name="role"
+                                required
+                                class="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-10 text-sm outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100">
+
+                            <option value="">Select new role</option>
+
+                            @foreach (var roleName in roles)
+                            {
+                                <option value="@roleName"
+                                        selected="@(currentRole == roleName)">
+                                    @roleName
+                                </option>
+                            }
+                        </select>
+
+                        <i class="bi bi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                </div>
+
+                <!-- Role Info -->
+                <div id="roleInfo"
+                     class="rounded-xl border border-teal-100 bg-teal-50 p-4">
+
+                    <div class="flex gap-3">
+                        <i class="bi bi-info-circle-fill mt-0.5 text-teal-700"></i>
+                        <div>
+                            <p id="roleTitle" class="text-sm font-bold text-teal-900">
+                                @currentRole
+                            </p>
+                            <p id="roleDescription" class="mt-1 text-sm text-teal-800">
+                                Review the selected role before saving changes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-slate-100 pt-5">
+
+                    <a asp-controller="Staff"
+                       asp-action="Index"
+                       class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 transition">
+                        <i class="bi bi-check-circle"></i>
+                        Update Staff Role
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Information -->
+        <div class="space-y-5">
+
+            <div class="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-sm">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-teal-300">
+                    <i class="bi bi-shield-check text-2xl"></i>
+                </div>
+
+                <h3 class="mt-5 text-lg font-bold">
+                    Access Control
+                </h3>
+
+                <p class="mt-2 text-sm leading-6 text-slate-300">
+                    A role determines which modules and operations a staff member can access.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800">Role Permissions</h3>
+
+                <div class="mt-4 space-y-4">
+
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">Admin</p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Staff management and beneficiary approval.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700">
+                            <i class="bi bi-pencil-square"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">Data Entry</p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Beneficiary registration and corrections.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                            <i class="bi bi-clipboard-check"></i>
+                        </span>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-800">Verification</p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                Beneficiary verification and correction requests.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p class="text-sm font-semibold text-amber-900">
+                    <i class="bi bi-exclamation-triangle-fill mr-1"></i>
+                    Important
+                </p>
+                <p class="mt-1 text-xs leading-5 text-amber-800">
+                    Changing a role immediately changes the permissions associated with the staff account.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.getElementById("role").addEventListener("change", function() {
+        const descriptions = {
+            "Admin": "Administrator access. Can manage staff accounts and perform approval functions.",
+            "DataEntry": "Data entry access. Can register beneficiaries and update records returned for correction.",
+            "Verification": "Verification access. Can review beneficiary records and return incorrect records for correction."
+        };
+
+        document.getElementById("roleTitle").textContent =
+            this.value || "Select a role";
+
+        document.getElementById("roleDescription").textContent =
+            descriptions[this.value] || "Select the appropriate staff access level.";
+    });
+</script>

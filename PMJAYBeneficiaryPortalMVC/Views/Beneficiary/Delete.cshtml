@@ -1,0 +1,85 @@
+﻿@model PMJAYBeneficiaryPortalMVC.Models.Beneficiary
+
+@{
+    ViewData["Title"] = "Delete Beneficiary";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold text-danger">Delete Beneficiary</h2>
+        <p class="text-muted">Review the record before confirming deletion.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-danger text-white py-3">
+            <h5 class="mb-0">Delete Confirmation</h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="alert alert-warning">
+                <strong>Warning!</strong>
+                Are you sure you want to permanently delete this beneficiary?
+                This action cannot be undone.
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <label class="text-muted">Beneficiary ID</label>
+                    <h6>@Model.BeneficiaryCode</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Beneficiary Name</label>
+                    <h6>@Model.BeneficiaryName</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Date of Birth</label>
+                    <h6>@Model.DateOfBirth.ToString("dd-MM-yyyy")</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Gender</label>
+                    <h6>@Model.Gender</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Mobile Number</label>
+                    <h6>@Model.MobileNumber</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">District</label>
+                    <h6>@Model.District</h6>
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <form asp-action="Delete" method="post">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-danger">
+                        Confirm Delete
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>

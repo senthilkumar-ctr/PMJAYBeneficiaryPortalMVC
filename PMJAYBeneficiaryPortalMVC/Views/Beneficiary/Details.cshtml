@@ -1,0 +1,105 @@
+﻿@model PMJAYBeneficiaryPortalMVC.Models.Beneficiary
+
+@{
+    ViewData["Title"] = "Beneficiary Details";
+}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Beneficiary Details</h2>
+            <p class="text-muted">Complete beneficiary information</p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Back to List
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Beneficiary Information</h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <label class="text-muted">Beneficiary ID</label>
+                    <h6>@Model.BeneficiaryCode</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Beneficiary Name</label>
+                    <h6>@Model.BeneficiaryName</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Date of Birth</label>
+                    <h6>@Model.DateOfBirth.ToString("dd-MM-yyyy")</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Gender</label>
+                    <h6>@Model.Gender</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Mobile Number</label>
+                    <h6>@Model.MobileNumber</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Aadhaar Last 4 Digits</label>
+                    <h6>@Model.AadhaarLast4</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">District</label>
+                    <h6>@Model.District</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Family ID</label>
+                    <h6>@Model.FamilyId</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Registration Date</label>
+                    <h6>@Model.RegistrationDate.ToString("dd-MM-yyyy")</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted">Status</label>
+                    <h6>
+                        <span class="badge bg-warning text-dark">
+                            @Model.Status
+                        </span>
+                    </h6>
+                </div>
+
+            </div>
+
+            <hr />
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary">
+                    Edit Beneficiary
+                </a>
+
+                <a asp-action="Index"
+                   class="btn btn-light border">
+                    Close
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</div>

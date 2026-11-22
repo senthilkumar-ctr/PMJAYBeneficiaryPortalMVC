@@ -1,0 +1,186 @@
+﻿@model PMJAYBeneficiaryPortalMVC.Models.Beneficiary
+
+@{
+    ViewData["Title"] = "Verify Beneficiary";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold">Beneficiary Verification</h3>
+            <p class="text-muted mb-0">
+                Review beneficiary information before verification.
+            </p>
+        </div>
+
+        <a asp-controller="Verification"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Beneficiary Information</h5>
+                <span class="badge bg-warning-subtle text-warning">
+                    @Model.Status
+                </span>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Beneficiary ID</label>
+                    <div class="fw-semibold">@Model.BeneficiaryCode</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Beneficiary Name</label>
+                    <div class="fw-semibold">@Model.BeneficiaryName</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Date of Birth</label>
+                    <div>@Model.DateOfBirth.ToString("dd-MM-yyyy")</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Gender</label>
+                    <div>@Model.Gender</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Mobile Number</label>
+                    <div>@Model.MobileNumber</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Aadhaar Last 4 Digits</label>
+                    <div>XXXX-XXXX-@Model.AadhaarLast4</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">District</label>
+                    <div>@Model.District</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Family ID</label>
+                    <div>@Model.FamilyId</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small">Registration Date</label>
+                    <div>@Model.RegistrationDate.ToString("dd-MM-yyyy")</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Status == "VERIFICATION_PENDING")
+    {
+        <div class="row g-4">
+
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+
+                        <h5 class="fw-bold text-success mb-3">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Verify Beneficiary
+                        </h5>
+
+                        <form asp-controller="Verification"
+                              asp-action="Verify"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="id" value="@Model.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Verification Remarks
+                                </label>
+                                <textarea name="remarks"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Enter verification remarks (optional)"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    onclick="return confirm('Are you sure you want to verify this beneficiary?');">
+                                <i class="bi bi-check-lg"></i>
+                                Verify Beneficiary
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+
+                        <h5 class="fw-bold text-danger mb-3">
+                            <i class="bi bi-arrow-return-left me-2"></i>
+                            Return for Correction
+                        </h5>
+
+                        <form asp-controller="Verification"
+                              asp-action="ReturnForCorrection"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="id" value="@Model.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Correction Remarks <span class="text-danger">*</span>
+                                </label>
+
+                                <textarea name="correctionRemarks"
+                                          class="form-control"
+                                          rows="3"
+                                          maxlength="1000"
+                                          placeholder="Clearly explain what needs to be corrected."
+                                          required></textarea>
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-danger"
+                                    onclick="return confirm('Return this beneficiary for correction?');">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                                Return for Correction
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            This beneficiary is no longer awaiting verification.
+        </div>
+    }
+
+</div>
